@@ -1,0 +1,2 @@
+rootProject.name='Kryptor'
+include ':app'

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/kryptoBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:textAlignment="center"
+        android:backgroundTint="?detailsColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kryptoBar"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:id="@+id/settingsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/copy_switch"
+                android:layout_width="323dp"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="44dp"
+                android:onClick="switchCopy"
+                android:textColor="?textColor"
+                android:text="@string/copy_switch" />
+
+            <Switch
+                android:id="@+id/share_switch"
+                android:layout_width="323dp"
+                android:layout_height="43dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="44dp"
+                android:onClick="switchShare"
+                android:textColor="?textColor"
+                android:text="@string/share_switch" />
+
+            <Switch
+                android:id="@+id/remove_switch"
+                android:layout_width="323dp"
+                android:layout_height="43dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="44dp"
+                android:onClick="switchRemove"
+                android:textColor="?textColor"
+                android:text="@string/remove_switch" />
+
+            <LinearLayout
+                android:id="@+id/modeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="67dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/authorLabel"
+                    android:layout_width="110dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="44dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/default_mode"
+                    android:textAlignment="textStart"  />
+
+                <Spinner
+                    android:id="@+id/modeBox"
+                    android:layout_width="181dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="44dp"
+                    android:entries="@array/mode_spinner"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/languageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/langLabel"
+                    android:layout_width="110dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="44dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/lang_label"
+                    android:textAlignment="textStart" />
+
+                <Spinner
+                    android:id="@+id/langBox"
+                    android:layout_width="181dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="44dp"
+                    android:entries="@array/language_spinner" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/themelayout"
+                android:layout_width="match_parent"
+                android:layout_height="63dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/themeLabel"
+                    android:layout_width="110dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="44dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/theme_label"
+                    android:textAlignment="textStart" />
+
+                <Spinner
+                    android:id="@+id/themeBox"
+                    android:layout_width="181dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="44dp"
+                    android:entries="@array/theme_spinner" />
+
+            </LinearLayout>
+
+                <Button
+                    android:id="@+id/applyButton"
+                    android:layout_width="125dp"
+                    android:layout_height="53dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="?buttonColor"
+                    android:text="@string/applyButton"
+                    android:onClick="applySettings"
+                    android:textColor="@color/white" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/returnbutton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="56dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="?detailsColor"
+        android:drawableStart="@drawable/ic_arrow_back_black_24dp"
+        android:onClick="returnCrypto"
+        android:title="@string/action_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/kryptoBar"
+        app:layout_constraintStart_toStartOf="@+id/kryptoBar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="254dp"
+        android:layout_height="54dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:text="@string/action_settings"
+        android:textAlignment="center"
+        android:textColor="@color/darkGray"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/kryptoBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/kryptoBar" />
+
+    <Button
+        android:id="@+id/aboutbutton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="56dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="?detailsColor"
+        android:drawableEnd="@drawable/ic_baseline_info_24"
+        android:onClick="openAbout"
+        android:title="@string/action_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/kryptoBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,36 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/lightGray</item>
+        <item name="colorPrimaryDark">@color/lime</item>
+        <item name="colorAccent">@color/lime</item>
+        <item name="android:windowBackground">@color/lightGray</item>
+        <item name="android:toolbarStyle">@color/lime</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="GreenTheme" parent="AppTheme">
+        <item name="detailsColor">@color/lime</item>
+        <item name="buttonColor">@color/darkGray</item>
+        <item name="textColor">@color/white</item>
+        <item name="buttonIconColor">@color/lime</item>
+    </style>
+
+
+    <style name="PinkBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/pastelSalmon</item>
+        <item name="colorPrimaryDark">@color/pink</item>
+        <item name="colorAccent">@color/pink</item>
+        <item name="android:windowBackground">@color/pastelSalmon</item>
+        <item name="android:toolbarStyle">@color/pink</item>
+        <item name="android:textColor">@color/darkPink</item>
+    </style>
+
+    <style name="PinkTheme" parent="PinkBase">
+        <item name="detailsColor">@color/pink</item>
+        <item name="buttonColor">@color/darkPink</item>
+        <item name="textColor">@color/darkPink</item>
+        <item name="buttonIconColor">@color/black</item>
+    </style>
+
+</resources>
