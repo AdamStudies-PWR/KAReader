@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">iComicPRO</string>
+    <string name="action_settings">Settings</string>
+
+
+    <!-- preference keys -->
+    <string name="preference_key">com.example.icomicpro.PREFERENCE_FILE_KEY</string>
+
+    <string name="first_time_key">first_time</string>
+
 </resources>
