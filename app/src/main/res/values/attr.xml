@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <attr name="detailsColor" format="reference|color" />
-    <attr name="buttonColor" format="reference|color" />
-    <attr name="textColor" format="reference|color" />
-    <attr name="buttonIconColor" format="reference|color" />
-</resources>
