@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -20,11 +21,20 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
 {
     boolean firstTime = true; //temporary
     TextView opened = null;
     LinearLayout newLL = null;
+
+    final String comicDir = "Komiksy";
+    final String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+
+    ArrayList<Series> comics = new ArrayList<Series>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,11 +42,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestPermissions(permissions, 1);
+        loadContent();
+
         //       SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_key), Context.MODE_PRIVATE);
 
         //       if(sharedPreferences.getBoolean(getString(R.string.first_time_key), true))
-        if (firstTime)
-            firstTime();
+        if (firstTime) firstTime();
 
             //------------------------------------------------------------------------------------------
             // kinda ugly and temporary but i'll make it dynamic
@@ -184,6 +196,45 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+    }
+
+    void loadContent()
+    {
+        Series temp;
+        List<String> temp2 = new ArrayList<String>();
+        comics.clear();
+        File directory = new File(Environment.getExternalStorageDirectory().toString() + comicDir);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            try
+            {
+                File[] files = directory.listFiles();
+                File[] issues;
+
+                for (File file : files)
+                {
+                    temp = new Series();
+                    temp2.clear();
+                    issues = file.listFiles();
+                    temp.title = file.getName();
+                    for (File issue : issues)
+                    {
+                        temp2.add(issue.getName());
+                    }
+                    temp.issues = temp2;
+                    comics.add(temp);
+                }
+            } catch (Exception error)
+            {
+                Log.e("Error", error.getMessage());
+            }
+        }
+
+        Log.e("FOLDER CONT: ", String.valueOf(comics.size()));
+        for(Series ser : comics)
+        {
+            Log.e("INFO", ser.title + ", " + ser.issues.toString());
+        }
     }
 
     void pickDirectory()
