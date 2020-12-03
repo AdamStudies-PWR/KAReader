@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">iComicPRO</string>
     <string name="action_settings">Settings</string>
+    <string name="action_refresh">Odśwież</string>
 
+
+    <string name="resource_error">Brak dostępnych rozdziałów</string>
 
     <!-- preference keys -->
     <string name="preference_key">com.example.icomicpro.PREFERENCE_FILE_KEY</string>
