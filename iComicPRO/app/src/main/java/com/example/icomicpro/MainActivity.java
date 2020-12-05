@@ -1,40 +1,29 @@
 package com.example.icomicpro;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.valueOf;
-
 public class MainActivity extends AppCompatActivity
 {
     boolean firstTime = true; //temporary
+    boolean errorState = false;
     TextView opened = null;
+
+    LinearLayout newLL = null;
 
     final String PATH = "Comics";
 
@@ -49,11 +38,17 @@ public class MainActivity extends AppCompatActivity
         if (firstTime)
         {
             Log.e("First time", "entered");
-            if (loadComics()) appearifySeries();
+            errorState = loadComics();
+
+            if (!errorState) appearifySeries();
             else handleCriticalErrors();
 
             firstTime = false;
-        } else appearifySeries();
+        } else
+        {
+            if (!errorState) appearifySeries();
+            else handleCriticalErrors();
+        }
     }
 
     boolean loadComics()
@@ -64,12 +59,13 @@ public class MainActivity extends AppCompatActivity
         List<String> temp4 = new ArrayList<>();
 
         File comicDir = new File(context.getExternalFilesDir(null), PATH);
+        //File comicDir = new File("ad", PATH);
 
         comics.clear();
 
         if (!comicDir.exists())
         {
-            if (!comicDir.mkdirs()) return false;
+            if (!comicDir.mkdirs()) return true;
         }
 
         File[] files = comicDir.listFiles();
@@ -99,17 +95,24 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        for (Series ser : comics)
-        {
-            Log.e("Contents: ", ser.title + " " + String.valueOf(ser.issues.size()));
-        }
-
-        return true;
+        return false;
     }
 
     void handleCriticalErrors()
     {
-        //todo
+        final LinearLayout scrollLayout = findViewById(R.id.linearMain);
+
+        scrollLayout.setPadding(40, 40, 40, 40);
+
+        TextView errorView = new TextView(this);
+        errorView.setText(R.string.critical_error);
+        errorView.setTextSize(20);
+        errorView.setTextColor(getColor(R.color.colorText));
+        errorView.setBackgroundColor(getColor(R.color.colorError));
+        errorView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        errorView.setPadding(40, 20, 20, 20);
+
+        scrollLayout.addView(errorView);
     }
 
     void appearifySeries()
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
         scrollLayout.setPadding(40, 40, 40, 40);
 
-        for(Series series : comics)
+        for(final Series series : comics)
         {
             final Button comic = new Button(this);
             comic.setText(series.title);
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             scrollLayout.addView(comic);
 
             final ScrollView newSV = new ScrollView(this);
-            final LinearLayout newLL = new LinearLayout(this);
+            newLL = new LinearLayout(this);
             newLL.setOrientation(LinearLayout.VERTICAL);
             newLL.setBackgroundColor(getColor(R.color.colorAccent));
             newSV.setVisibility(View.GONE);
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
             if (!series.issues.isEmpty())
             {
-                for(String title : series.issues)
+                for(final String title : series.issues)
                 {
                     final TextView letssee = new TextView(comic.getContext());
                     letssee.setText(title);
@@ -164,7 +167,7 @@ public class MainActivity extends AppCompatActivity
                             letssee.setTextColor(getColor(R.color.colorAccent));
 
                             opened = letssee;
-                            goToChapter(newLL.indexOfChild(letssee));
+                            goToChapter(series.issues.indexOf(title), series);
                         }
                     });
 
@@ -205,6 +208,11 @@ public class MainActivity extends AppCompatActivity
         LinearLayout scrollLayout = findViewById(R.id.linearMain);
         scrollLayout.removeAllViews();
         comics.clear();
+
+        errorState = loadComics();
+
+        if(!errorState) appearifySeries();
+        else handleCriticalErrors();
     }
 
     void firstTime()
@@ -243,9 +251,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    void goToChapter(int number)
+    void goToChapter(int number, Series series)
     {
         Intent chapter = new Intent(this, ChapterActivity.class);
+        chapter.putExtra("chapter", number);
+        chapter.putExtra("series", series);
+        chapter.putExtra("directory", PATH);
+
         startActivityForResult(chapter, 1);
     }
 
@@ -256,7 +268,7 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == 1)
         {
-            /*if (opened != null)
+            if (opened != null)
             {
                 if ((newLL.indexOfChild(opened) % 2 == 0))
                 {
@@ -266,7 +278,7 @@ public class MainActivity extends AppCompatActivity
                     opened.setBackgroundColor(getColor(R.color.colorAccent2));
                 }
                 opened = null;
-            }*/
+            }
         }
     }
 

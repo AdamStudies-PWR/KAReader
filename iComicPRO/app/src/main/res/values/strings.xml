@@ -5,6 +5,7 @@
 
 
     <string name="resource_error">Brak dostępnych rozdziałów</string>
+    <string name="critical_error">Błąd dostępu do plików! Aplikacja potrzebuje uprawnień dostępu do pamięci urządzenia.</string>
 
     <!-- preference keys -->
     <string name="preference_key">com.example.icomicpro.PREFERENCE_FILE_KEY</string>
