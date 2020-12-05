@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity
 
         if (firstTime)
         {
-            Log.e("First time", "entered");
             errorState = loadComics();
 
             if (!errorState) appearifySeries();

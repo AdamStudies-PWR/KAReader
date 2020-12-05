@@ -4,24 +4,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.FileUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class ChapterActivity extends AppCompatActivity
@@ -40,15 +41,33 @@ public class ChapterActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter);
 
-        opened = (Series) getIntent().getSerializableExtra("series");
-        chapter = getIntent().getIntExtra("chapter", 0);
-        folder = getIntent().getStringExtra("directory");
 
-        if (opened != null && chapter >= 0)
+        if(savedInstanceState != null)
         {
-            if (chapter < opened.issues.size()) unzipData();
-            else handleInvalidData();
-        } else handleInvalidData();
+            tempDir = savedInstanceState.getString("tempDir");
+            images = (Bitmap[]) savedInstanceState.getSerializable("images");
+            displayPages();
+        }
+        else
+        {
+            opened = (Series) getIntent().getSerializableExtra("series");
+            chapter = getIntent().getIntExtra("chapter", 0);
+            folder = getIntent().getStringExtra("directory");
+
+            if (opened != null && chapter >= 0)
+            {
+                if (chapter < opened.issues.size()) unzipData();
+                else handleInvalidData();
+            } else handleInvalidData();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        outState.putSerializable("images", images);
+        outState.putString("tempDir", tempDir);
+        super.onSaveInstanceState(outState);
     }
 
     void handleInvalidData()
@@ -58,19 +77,19 @@ public class ChapterActivity extends AppCompatActivity
 
     String getPageName(int value)
     {
-        if(value < 10) return "00" + String.valueOf(value);
-        if(value < 100) return "0" + String.valueOf(value);
+        if (value < 10) return "00" + String.valueOf(value);
+        if (value < 100) return "0" + String.valueOf(value);
         return String.valueOf(value);
     }
 
     int getPageIndex(String value)
     {
-        if((String.valueOf(value.charAt(0)).equals("0")) && (String.valueOf(value.charAt(1)).equals("0")))
+        if ((String.valueOf(value.charAt(0)).equals("0")) && (String.valueOf(value.charAt(1)).equals("0")))
         {
             return Integer.parseInt(String.valueOf(value.charAt(2)));
         }
 
-        if(String.valueOf(value.charAt(0)).equals("0"))
+        if (String.valueOf(value.charAt(0)).equals("0"))
         {
             return 10 * Integer.parseInt(String.valueOf(value.charAt(1))) + Integer.parseInt(String.valueOf(value.charAt(2)));
         }
@@ -89,12 +108,11 @@ public class ChapterActivity extends AppCompatActivity
 
         if (temp.exists())
         {
-            for(File file : Objects.requireNonNull(temp.listFiles()))
+            for (File file : Objects.requireNonNull(temp.listFiles()))
             {
                 file.delete();
             }
-        }
-        else
+        } else
         {
             if (!temp.mkdirs())
             {
@@ -103,23 +121,22 @@ public class ChapterActivity extends AppCompatActivity
             }
         }
 
-        File zipfile = new File(context.getExternalFilesDir(null), path);
+        File zipFile = new File(context.getExternalFilesDir(null), path);
 
         try
         {
             int counter = 0;
             String extension;
 
-            FileInputStream file = new FileInputStream(zipfile);
+            FileInputStream file = new FileInputStream(zipFile);
             ZipInputStream issue = new ZipInputStream(file);
             ZipEntry content = null;
 
             while ((content = issue.getNextEntry()) != null)
             {
                 extension = content.getName().split("[.]")[1];
-                if (extension.contains("jpg"))
+                if (extension.contains("jpg") || extension.contains("JPG"))
                 {
-
                     FileOutputStream unzipped = new FileOutputStream(temp + File.separator +
                             "p" + getPageName(counter) + "." + extension);
                     BufferedOutputStream marine = new BufferedOutputStream(unzipped);
@@ -155,7 +172,7 @@ public class ChapterActivity extends AppCompatActivity
 
         images = new Bitmap[Objects.requireNonNull(temp.listFiles()).length];
 
-        for(File image : Objects.requireNonNull(temp.listFiles()))
+        for (File image : Objects.requireNonNull(temp.listFiles()))
         {
             stringValue = image.getName().split("[.]")[0];
             stringValue = stringValue.replace("p", "");
@@ -175,7 +192,7 @@ public class ChapterActivity extends AppCompatActivity
 
         scrollLayout.removeAllViews();
 
-        for(Bitmap page : images)
+        for (Bitmap page : images)
         {
             ImageView newPage = new ImageView(this);
             newPage.setImageBitmap(page);
@@ -190,7 +207,7 @@ public class ChapterActivity extends AppCompatActivity
         super.onBackPressed();
 
         File temp = new File(tempDir);
-        for(File file : Objects.requireNonNull(temp.listFiles()))
+        for (File file : Objects.requireNonNull(temp.listFiles()))
         {
             file.delete();
         }
