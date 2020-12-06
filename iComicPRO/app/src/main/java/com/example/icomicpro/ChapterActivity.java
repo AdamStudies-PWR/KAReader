@@ -1,43 +1,44 @@
 package com.example.icomicpro;
 
-import androidx.annotation.Dimension;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MotionEventCompat;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;;
 import java.util.zip.ZipInputStream;
 
 public class ChapterActivity extends AppCompatActivity
 {
     String folder;
     String tempDir;
+    String chapterName = "Unknown";
 
     Series opened = null;
+
+    boolean fullscreen;
+
     int chapter;
 
     Bitmap[] images;
@@ -49,26 +50,37 @@ public class ChapterActivity extends AppCompatActivity
         setContentView(R.layout.activity_chapter);
 
 
+
         if(savedInstanceState != null)
         {
-            tempDir = savedInstanceState.getString("tempDir");
             images = (Bitmap[]) savedInstanceState.getSerializable("images");
+            fullscreen = savedInstanceState.getBoolean("fullscreen", true);
+            chapterName = savedInstanceState.getString("title", chapterName);
+            chapter = savedInstanceState.getInt("chapter", 0);
+            opened = (Series) savedInstanceState.getSerializable("series");
             displayPages();
         }
         else
         {
+            SharedPreferences preferences = getSharedPreferences(getString(R.string.preference_key), MODE_PRIVATE);
+            fullscreen = preferences.getBoolean("fullscreen", true);
+
             opened = (Series) getIntent().getSerializableExtra("series");
             chapter = getIntent().getIntExtra("chapter", 0);
             folder = getIntent().getStringExtra("directory");
 
             if (opened != null && chapter >= 0)
             {
-                if (chapter < opened.issues.size()) unzipData();
+                if (chapter < opened.issues.size())
+                {
+                    chapterName = opened.title + " " + opened.issues.get(chapter);
+                    unzipData();
+                }
                 else handleInvalidData();
             } else handleInvalidData();
         }
 
-        fullScreen();
+        if (fullscreen) fullScreen();
     }
 
     void fullScreen()
@@ -86,8 +98,45 @@ public class ChapterActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState)
     {
         outState.putSerializable("images", images);
-        outState.putString("tempDir", tempDir);
+        outState.putBoolean("fullscreen", fullscreen);
+        outState.putString("title", chapterName);
+        outState.putInt("chapter", chapter);
+        outState.putSerializable("series", opened);
         super.onSaveInstanceState(outState);
+    }
+
+    public void goNext(View view)
+    {
+        if((chapter + 1) < opened.issues.size())
+        {
+            chapter++;
+            chapterName = opened.title + " " + opened.issues.get(chapter);
+
+            unzipData();
+        }
+        else
+        {
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, R.string.last_chapter, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    public void goBack(View view)
+    {
+        if((chapter - 1) >= 0)
+        {
+            chapter--;
+            chapterName = opened.title + " " + opened.issues.get(chapter);
+
+            unzipData();
+        }
+        else
+        {
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, R.string.first_chapter, Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     void handleInvalidData()
@@ -203,12 +252,19 @@ public class ChapterActivity extends AppCompatActivity
             images[index] = BitmapFactory.decodeFile(stringValue);
         }
 
+        for (File file : Objects.requireNonNull(temp.listFiles()))
+        {
+            file.delete();
+        }
+
         displayPages();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     void displayPages()
     {
-        final LinearLayout scrollLayout = findViewById(R.id.comicView);
+        ScrollView sw = findViewById(R.id.primaryScroll);
+        LinearLayout scrollLayout = findViewById(R.id.comicView);
 
         scrollLayout.removeAllViews();
 
@@ -228,12 +284,6 @@ public class ChapterActivity extends AppCompatActivity
     public void onBackPressed()
     {
         super.onBackPressed();
-
-        File temp = new File(tempDir);
-        for (File file : Objects.requireNonNull(temp.listFiles()))
-        {
-            file.delete();
-        }
 
         Intent intent = new Intent();
         setResult(1, intent);
