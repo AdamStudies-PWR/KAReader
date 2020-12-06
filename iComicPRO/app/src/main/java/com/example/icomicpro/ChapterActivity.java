@@ -13,8 +13,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -48,8 +51,6 @@ public class ChapterActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chapter);
-
-
 
         if(savedInstanceState != null)
         {
@@ -268,6 +269,7 @@ public class ChapterActivity extends AppCompatActivity
 
         scrollLayout.removeAllViews();
 
+        addButtons(scrollLayout);
         for (Bitmap page : images)
         {
             ImageView newPage = new ImageView(this);
@@ -278,6 +280,40 @@ public class ChapterActivity extends AppCompatActivity
             scrollLayout.addView(newPage);
             //break;
         }
+        addButtons(scrollLayout);
+    }
+
+    public void addButtons(LinearLayout layout)
+    {
+        LinearLayout horizontal = new LinearLayout(this);
+        horizontal.setOrientation(LinearLayout.HORIZONTAL);
+        horizontal.setMinimumHeight(50);
+        horizontal.setBackground(getDrawable(R.drawable.gradient));
+        horizontal.setGravity(Gravity.CENTER);
+
+        ImageButton back = new ImageButton(this);
+        back.setImageDrawable(getDrawable(R.drawable.arrow_back));
+        back.setBackgroundColor(getColor(R.color.colorPrimary));;
+        back.setPadding(40, 20, 20, 20);
+        back.setOnClickListener(this::goBack);
+
+        TextView text = new TextView(this);
+        text.setText(chapterName);
+        text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        text.setGravity(Gravity.CENTER);
+        text.setTextColor(getColor(R.color.colorText));
+
+        ImageButton forward = new ImageButton(this);
+        forward.setImageDrawable(getDrawable(R.drawable.next_chapter));
+        forward.setBackgroundColor(getColor(R.color.colorPrimary));
+        forward.setPadding(40, 20, 20, 20);
+        forward.setOnClickListener(this::goNext);
+
+        horizontal.addView(back);
+        horizontal.addView(text);
+        horizontal.addView(forward);
+
+        layout.addView(horizontal);
     }
 
     @Override
